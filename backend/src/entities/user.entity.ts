@@ -1,33 +1,41 @@
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
+  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { Contribution } from './contribution.entity';
 
+@ObjectType()
 @Entity('user')
 export class User {
+  @Field(() => String)
   @PrimaryColumn()
   id!: string;
 
+  @Field(() => String)
   @Column({
     length: 510,
   })
   avatar!: string;
 
+  @Field(() => String)
   @Column()
   username!: string;
 
+  @Field(() => String)
   @Column()
   bio!: string;
 
-  @OneToMany(() => Contribution, (contribution) => contribution.user)
+  @Field(() => Contribution)
+  @OneToOne(() => Contribution)
   @JoinColumn({ name: 'contribution_id' })
-  contributions!: Contribution[];
+  contribution!: Contribution;
 
+  @Field(() => Date)
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',

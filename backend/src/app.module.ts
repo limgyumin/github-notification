@@ -1,9 +1,19 @@
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ContributionModule } from './modules/contribution.module';
+import { join } from 'path';
+
 import { UserModule } from './modules/user.module';
+import { ContributionModule } from './modules/contribution.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, ContributionModule],
+  imports: [
+    GraphQLModule.forRoot({
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    }),
+    TypeOrmModule.forRoot(),
+    UserModule,
+    ContributionModule,
+  ],
 })
 export class AppModule {}

@@ -19,4 +19,8 @@ export default {
   DB_NAME: getEnv('DB_NAME'),
   DB_SYNCHRONIZE: getEnv('DB_SYNCHRONIZE'),
   DB_LOGGING: getEnv('DB_LOGGING'),
+  GITHUB_ID: getEnv('GITHUB_ID'),
+  GITHUB_SECRET: getEnv('GITHUB_SECRET'),
+  GITHUB_TOKEN: getEnv('GITHUB_TOKEN'),
+  JWT_SECRET: getEnv('JWT_SECRET'),
 };
