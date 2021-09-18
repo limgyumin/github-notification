@@ -1,29 +1,22 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from './user.entity';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@ObjectType()
 @Entity('contribution')
 export class Contribution {
-  @PrimaryGeneratedColumn()
-  idx!: number;
+  @Field(() => String)
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @ManyToOne(() => User, (user) => user.contributions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'user_id' })
-  user!: User;
-
+  @Field(() => Int)
   @Column({ name: 'week_contributions' })
   weekContributions!: number;
 
+  @Field(() => Int)
   @Column({ name: 'total_contributions' })
   totalContributions!: number;
 
-  @Column({ name: 'today_contribution' })
-  todayContribution!: number;
+  @Field(() => Int)
+  @Column({ name: 'today_contributions' })
+  todayContributions!: number;
 }
