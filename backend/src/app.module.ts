@@ -5,6 +5,7 @@ import { join } from 'path';
 
 import { UserModule } from './modules/user.module';
 import { ContributionModule } from './modules/contribution.module';
+import { ScheduleLib } from './utils/libs/schedule.lib';
 
 @Module({
   imports: [
@@ -15,5 +16,6 @@ import { ContributionModule } from './modules/contribution.module';
     UserModule,
     ContributionModule,
   ],
+  providers: [ScheduleLib],
 })
 export class AppModule {}

@@ -53,11 +53,12 @@ export class GitHubLib {
   }
 
   async getContributionByUser(
-    userId: string,
+    username: string,
   ): Promise<GitHubContribution | null> {
     const query = gql`
       query getContribution($login: String!) {
         user(login: $login) {
+          login
           contributionsCollection {
             contributionCalendar {
               totalContributions
@@ -76,10 +77,8 @@ export class GitHubLib {
 
     try {
       const data = await graphQLClient.request<GitHubContribution>(query, {
-        login: userId,
+        login: username,
       });
-
-      console.log(userId, data.user.contributionsCollection);
 
       return data;
     } catch (e: any) {

@@ -29,18 +29,16 @@ export class UserService {
       return this.signToken(existUser);
     }
 
-    const contribution = await this.contributionService.createContribution(
-      gitHubUser.login,
-    );
+    const { id, login, avatar_url, bio } = gitHubUser;
 
-    const { id, name, login, avatar_url, bio } = gitHubUser;
-
-    const user = this.userRepository.create({ id, bio, contribution });
+    const user = this.userRepository.create({ id, bio });
 
     user.avatar = avatar_url;
-    user.username = name || login;
+    user.username = login;
 
     const savedUser = await this.userRepository.save(user);
+
+    await this.contributionService.createContribution(gitHubUser.login);
 
     return this.signToken(savedUser);
   }
