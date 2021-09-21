@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { UserRepository } from 'src/repositories/user.repository';
+import { User } from 'src/entities/user.entity';
 import { JwtDTO } from '../dto/jwt.dto';
 
 import config from '../../config';
@@ -16,8 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtDTO) {
-    const user = await this.userRepository.findOneByIdLeftJoin(payload.id);
+  async validate(payload: JwtDTO): Promise<User> {
+    const user = await this.userRepository.findOneById(payload.id);
 
     if (!user) {
       throw new UnauthorizedException('Invalid resource.');

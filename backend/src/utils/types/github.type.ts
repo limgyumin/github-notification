@@ -1,13 +1,13 @@
 export type GitHubUser = {
   avatar_url: string;
   id: string;
-  name: string;
   login: string;
   bio: string;
 };
 
 export type GitHubContribution = {
   user: {
+    login: string;
     contributionsCollection: ContributionsCollection;
   };
 };
