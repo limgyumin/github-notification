@@ -106,8 +106,8 @@ export class ContributionService {
           if (user !== undefined) {
             const { total, week, today } = contributionResult;
 
-            if (!today) {
-              // this.sendMessage('');
+            if (today === 0 && user.allowFcm && user.fcmToken) {
+              this.sendMessage(user.fcmToken);
             }
 
             const contribution = this.contributionRepository.create();

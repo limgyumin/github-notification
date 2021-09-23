@@ -37,4 +37,10 @@ export class UserResolver {
   async auth(@Args('code') code: string): Promise<string> {
     return await this.userService.auth(code);
   }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async allowNotification(@CtxUser() user: User): Promise<User> {
+    return await this.userService.allowNotification(user);
+  }
 }
