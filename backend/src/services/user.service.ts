@@ -43,6 +43,12 @@ export class UserService {
     return this.signToken(savedUser);
   }
 
+  async allowNotification(user: User): Promise<User> {
+    user.allowFcm = !user.allowFcm;
+
+    return await this.userRepository.save(user);
+  }
+
   private signToken({ id }: User): string {
     const payload: JwtDTO = {
       id,

@@ -22,6 +22,20 @@ export class User {
   @Column()
   bio!: string;
 
+  @Field(() => String, {
+    nullable: true,
+  })
+  @Column({
+    type: 'text',
+    nullable: true,
+    name: 'fcm_token',
+  })
+  fcmToken!: string | null;
+
+  @Field(() => Boolean)
+  @Column({ default: false, name: 'allow_fcm' })
+  allowFcm!: boolean;
+
   @Field(() => Date)
   @CreateDateColumn({
     name: 'created_at',

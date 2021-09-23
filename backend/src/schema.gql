@@ -7,6 +7,8 @@ type User {
   avatar: String!
   username: String!
   bio: String!
+  fcmToken: String
+  allowFcm: Boolean!
   createdAt: DateTime!
   contributions: Contribution!
 }
@@ -30,4 +32,5 @@ type Query {
 
 type Mutation {
   auth(code: String!): String!
+  allowNotification: User!
 }
