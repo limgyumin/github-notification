@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 
 import { IoInformationCircleOutline } from "react-icons/io5";
@@ -7,33 +7,65 @@ import ContributionItem from "./ContributionItem";
 
 import { Contributions } from "types/user.type";
 
+type OmittedContributions = Omit<Contributions, "__typename">;
+
+type ContributionLabel = keyof OmittedContributions;
+
+type ContributionItem = { label: ContributionLabel; count: number };
+
 type Props = {
   contributions: Contributions;
 };
 
 const ContributionList: React.FC<Props> = ({ contributions }) => {
-  const {
-    todayContributions,
-    weekContributions,
-    totalContributions,
-  } = contributions;
+  const removeTypename = (object: Contributions): OmittedContributions => {
+    if (object.hasOwnProperty("__typename")) {
+      const copiedObject = { ...object };
+      const { __typename, ...rest } = copiedObject;
+
+      return rest;
+    }
+    return object;
+  };
+
+  const convertObject2Array = (
+    object: OmittedContributions
+  ): ContributionItem[] =>
+    (Object.entries(object) as [ContributionLabel, number][]).map((array) => {
+      const [label, count] = array;
+      const object: ContributionItem = { label, count };
+
+      return object;
+    });
+
+  const sortByOrder = (items: ContributionItem[]): ContributionItem[] => {
+    const order = { today: 1, week: 2, total: 3 };
+
+    return items.sort((x, y) => order[x.label] - order[y.label]);
+  };
+
+  const getNameByLabel: { [key in ContributionLabel]: string } = {
+    today: "오늘 커밋",
+    week: "이번 주 커밋",
+    total: "전체 커밋",
+  };
+
+  const contributionList = useMemo<ContributionItem[]>(
+    () => sortByOrder(convertObject2Array(removeTypename(contributions))),
+    [contributions]
+  );
 
   return (
     <Container>
       <h1>내 커밋 정보</h1>
       <Wrapper>
-        <ContributionItem
-          label={"오늘 커밋"}
-          contribution={todayContributions}
-        />
-        <ContributionItem
-          label={"이번 주 커밋"}
-          contribution={weekContributions}
-        />
-        <ContributionItem
-          label={"전체 커밋"}
-          contribution={totalContributions}
-        />
+        {contributionList.map((item, index) => (
+          <ContributionItem
+            key={index}
+            label={getNameByLabel[item.label]}
+            contribution={item.count}
+          />
+        ))}
       </Wrapper>
       <Notice>
         <IoInformationCircleOutline />

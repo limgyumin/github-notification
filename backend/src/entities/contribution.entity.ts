@@ -21,14 +21,14 @@ export class Contribution {
   user!: User;
 
   @Field(() => Int)
-  @Column({ name: 'week_contributions' })
-  weekContributions!: number;
+  @Column({ name: 'week' })
+  week!: number;
 
   @Field(() => Int)
-  @Column({ name: 'total_contributions' })
-  totalContributions!: number;
+  @Column({ name: 'total' })
+  total!: number;
 
   @Field(() => Int)
-  @Column({ name: 'today_contributions' })
-  todayContributions!: number;
+  @Column({ name: 'today' })
+  today!: number;
 }

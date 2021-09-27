@@ -1,3 +1,7 @@
+export type Typename = {
+  __typename: string;
+};
+
 export type User = {
   id: string;
   avatar: string;
@@ -6,13 +10,13 @@ export type User = {
   allowFcm: boolean;
   createdAt: Date;
   contributions: Contributions;
-};
+} & Typename;
 
 export type Contributions = {
-  totalContributions: number;
-  weekContributions: number;
-  todayContributions: number;
-};
+  total: number;
+  week: number;
+  today: number;
+} & Typename;
 
 export type UserResponse = {
   me: User;
