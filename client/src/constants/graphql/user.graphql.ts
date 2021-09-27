@@ -10,9 +10,9 @@ export const FETCH_CURRENT_USER = gql`
       allowFcm
       createdAt
       contributions {
-        totalContributions
-        weekContributions
-        todayContributions
+        total
+        week
+        today
       }
     }
   }
