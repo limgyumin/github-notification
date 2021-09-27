@@ -40,6 +40,15 @@ export class UserResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
+  async saveFcmToken(
+    @CtxUser() user: User,
+    @Args('fcmToken') fcmToken: string,
+  ): Promise<User> {
+    return await this.userService.saveFcmToken(user, fcmToken);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
   async allowNotification(@CtxUser() user: User): Promise<User> {
     return await this.userService.allowNotification(user);
   }

@@ -43,6 +43,12 @@ export class UserService {
     return this.signToken(savedUser);
   }
 
+  async saveFcmToken(user: User, fcmToken: string): Promise<User> {
+    user.fcmToken = fcmToken;
+
+    return await this.userRepository.save(user);
+  }
+
   async allowNotification(user: User): Promise<User> {
     user.allowFcm = !user.allowFcm;
 
