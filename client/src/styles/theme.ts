@@ -1,7 +1,17 @@
 const colors = {
   bgWhite: "#FFF",
+  bgGray: "#FBFBFB",
+  bgGray1: "#CFCFCF",
+  bgLGray: "#EBEBEB",
+  bgBlack: "#1D1D1D",
 
+  bdGray: "#E8E8E8",
+  bdGray1: "#E1E1E1",
+
+  ftWhite: "#FFF",
   ftBlack: "#000",
+  ftGray: "#727272",
+  ftLGray: "#9F9F9F",
 };
 
 const sizes = {

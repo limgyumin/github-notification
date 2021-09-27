@@ -32,5 +32,6 @@ type Query {
 
 type Mutation {
   auth(code: String!): String!
+  saveFcmToken(fcmToken: String!): User!
   allowNotification: User!
 }

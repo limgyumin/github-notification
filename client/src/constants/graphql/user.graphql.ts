@@ -17,3 +17,20 @@ export const FETCH_CURRENT_USER = gql`
     }
   }
 `;
+
+export const SAVE_FCM_TOKEN = gql`
+  mutation saveFcmToken($fcmToken: String!) {
+    saveFcmToken(fcmToken: $fcmToken) {
+      id
+    }
+  }
+`;
+
+export const ALLOW_NOTIFICATION = gql`
+  mutation {
+    allowNotification {
+      id
+      allowFcm
+    }
+  }
+`;

@@ -7,11 +7,9 @@ import {
   NormalizedCacheObject,
 } from "@apollo/client";
 import merge from "deepmerge";
-import Cookies from "cookies";
-import cookie from "js-cookie";
 
+import { getToken } from "./token";
 import config from "config/config.json";
-import { COOKIE_ACCESS_TOKEN_KEY } from "constants/cookie";
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
@@ -22,23 +20,13 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 const createApolloClient = (
   ctx?: GetServerSidePropsContext
 ): ApolloClient<NormalizedCacheObject> => {
-  const getToken = (): string | undefined => {
-    if (isServer && ctx) {
-      const serverSideCookie = new Cookies(ctx.req, ctx.res);
-
-      return serverSideCookie.get(COOKIE_ACCESS_TOKEN_KEY);
-    }
-
-    return cookie.get(COOKIE_ACCESS_TOKEN_KEY);
-  };
-
   return new ApolloClient({
     ssrMode: isServer,
     link: new HttpLink({
       uri: config.URI,
       credentials: "same-origin",
       headers: {
-        authorization: `Bearer ${getToken()}`,
+        authorization: `Bearer ${getToken(ctx)}`,
       },
     }),
     cache: new InMemoryCache(),

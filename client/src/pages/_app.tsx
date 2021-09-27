@@ -1,14 +1,15 @@
 import type { AppProps } from "next/app";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+import { ApolloProvider } from "@apollo/client";
 import { ThemeProvider } from "styled-components";
+
+import Header from "components/Header";
 
 import { GlobalStyles } from "styles/globalStyles";
 import { theme } from "styles/theme";
 
-import { ApolloProvider } from "@apollo/client";
-
-import "styles/fonts.css";
 import { useApollo } from "utils/libs/apollo-client";
+import "styles/fonts.css";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const apolloClient = useApollo(pageProps);
@@ -27,6 +28,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     <ApolloProvider client={apolloClient}>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
+        <Header />
         <Component {...pageProps} />
       </ThemeProvider>
     </ApolloProvider>
