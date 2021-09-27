@@ -81,9 +81,9 @@ export class ContributionService {
 
     const contribution = this.contributionRepository.create({
       user,
-      totalContributions: total,
-      weekContributions: week,
-      todayContributions: today,
+      total,
+      week,
+      today,
     });
 
     return await this.contributionRepository.save(contribution);
@@ -113,9 +113,9 @@ export class ContributionService {
             const contribution = this.contributionRepository.create();
 
             contribution.user = user;
-            contribution.totalContributions = total;
-            contribution.weekContributions = week;
-            contribution.todayContributions = today;
+            contribution.total = total;
+            contribution.week = week;
+            contribution.today = today;
 
             return this.contributionRepository.save(contribution);
           }
