@@ -52,7 +52,7 @@ export class GitHubLib {
     }
   }
 
-  async getContributionByUser(
+  async getContributionByUserFromAPI(
     username: string,
   ): Promise<GitHubContribution | null> {
     const query = gql`

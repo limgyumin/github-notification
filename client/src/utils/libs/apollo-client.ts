@@ -7,6 +7,7 @@ import {
   NormalizedCacheObject,
 } from "@apollo/client";
 import merge from "deepmerge";
+import _ from "lodash";
 
 import { getToken } from "./token";
 import config from "config/config.json";
@@ -42,7 +43,14 @@ export const initializeApollo = (
   if (initialState) {
     const existingCache = _apolloClient.extract();
 
-    const data = merge(initialState, existingCache);
+    const data = merge(initialState, existingCache, {
+      arrayMerge: (destinationArray, sourceArray) => [
+        ...sourceArray,
+        ...destinationArray.filter((d) =>
+          sourceArray.every((s) => !_.isEqual(d, s))
+        ),
+      ],
+    });
 
     _apolloClient.cache.restore(data);
   }

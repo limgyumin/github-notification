@@ -9,13 +9,14 @@ import DailyNotification from "./DailyNotification";
 import bannerImage from "assets/images/banner.svg";
 
 import { useFetchCurrentUser } from "hooks/useFetchCurrentUser";
+import WeekContribution from "./WeekContribution";
 
 const Main: React.FC = () => {
   const { data } = useFetchCurrentUser();
 
   if (!data) return <div>loading...</div>;
 
-  const { username, bio, avatar, contributions, allowFcm } = data.me;
+  const { username, bio, avatar, contributions, weekdays, allowFcm } = data.me;
 
   return (
     <Container>
@@ -29,6 +30,7 @@ const Main: React.FC = () => {
       </Banner>
       <Contents>
         <ContributionList contributions={contributions} />
+        <WeekContribution weekdays={weekdays} />
         <DailyNotification allowFcm={allowFcm} />
       </Contents>
     </Container>

@@ -10,12 +10,18 @@ export type User = {
   allowFcm: boolean;
   createdAt: Date;
   contributions: Contributions;
+  weekdays: Weekday[];
 } & Typename;
 
 export type Contributions = {
   total: number;
   week: number;
   today: number;
+} & Typename;
+
+export type Weekday = {
+  count: number;
+  day: number;
 } & Typename;
 
 export type UserResponse = {

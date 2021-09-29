@@ -10,6 +10,7 @@ import {
 import { Contribution } from 'src/entities/contribution.entity';
 
 import { User } from 'src/entities/user.entity';
+import { Weekday } from 'src/entities/weekdays.entity';
 import { ContributionService } from 'src/services/contribution.service';
 import { UserService } from 'src/services/user.service';
 import { CtxUser } from 'src/utils/decorators/get-user.decorator';
@@ -30,7 +31,12 @@ export class UserResolver {
 
   @ResolveField(() => Contribution)
   async contributions(@Parent() user: User) {
-    return await this.contributionService.getContribution(user.id);
+    return await this.contributionService.getContributionByUser(user.id);
+  }
+
+  @ResolveField(() => [Weekday])
+  async weekdays(@Parent() user: User) {
+    return await this.contributionService.getWeekdaysByUser(user.id);
   }
 
   @Mutation(() => String)
