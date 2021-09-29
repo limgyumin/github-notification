@@ -14,6 +14,10 @@ export const FETCH_CURRENT_USER = gql`
         week
         today
       }
+      weekdays {
+        count
+        day
+      }
     }
   }
 `;
