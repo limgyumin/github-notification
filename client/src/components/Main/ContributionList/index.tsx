@@ -6,6 +6,7 @@ import { IoInformationCircleOutline } from "react-icons/io5";
 import ContributionItem from "./ContributionItem";
 
 import { Contributions } from "types/user.type";
+import { removeTypename } from "utils/libs/remove-typename";
 
 type OmittedContributions = Omit<Contributions, "__typename">;
 
@@ -18,16 +19,6 @@ type Props = {
 };
 
 const ContributionList: React.FC<Props> = ({ contributions }) => {
-  const removeTypename = (object: Contributions): OmittedContributions => {
-    if (object.hasOwnProperty("__typename")) {
-      const copiedObject = { ...object };
-      const { __typename, ...rest } = copiedObject;
-
-      return rest;
-    }
-    return object;
-  };
-
   const convertObject2Array = (
     object: OmittedContributions
   ): ContributionItem[] =>
@@ -46,7 +37,7 @@ const ContributionList: React.FC<Props> = ({ contributions }) => {
 
   const getNameByLabel: { [key in ContributionLabel]: string } = {
     today: "오늘 커밋",
-    week: "이번 주 커밋",
+    week: "주간 커밋",
     total: "전체 커밋",
   };
 
@@ -80,7 +71,7 @@ const ContributionList: React.FC<Props> = ({ contributions }) => {
 
 const Container = styled.div`
   width: 100%;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 
   & > h1 {
     font-size: 1.4rem;

@@ -19,7 +19,7 @@ const ContributionItem: React.FC<Props> = ({ label, contribution }) => {
       <Contribution>
         <div>
           <CountUp
-            className="count-up"
+            className="contribution"
             duration={2}
             separator=","
             end={contribution}
@@ -65,7 +65,7 @@ const Contribution = styled.div`
   justify-content: flex-end;
 
   & > div {
-    .count-up {
+    .contribution {
       font-size: 2.6rem;
       font-weight: 700;
       color: ${({ theme }) => theme.colors.ftBlack};
