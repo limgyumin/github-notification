@@ -1,5 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
+import { Weekday } from './weekdays.entity';
 
 @ObjectType()
 @Entity('user')
@@ -35,6 +42,10 @@ export class User {
   @Field(() => Boolean)
   @Column({ default: false, name: 'allow_fcm' })
   allowFcm!: boolean;
+
+  @Field(() => [Weekday])
+  @OneToMany(() => Weekday, (weekdays) => weekdays.user)
+  weekdays!: Weekday[];
 
   @Field(() => Date)
   @CreateDateColumn({

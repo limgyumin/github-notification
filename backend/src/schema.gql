@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Weekday {
+  id: String!
+  user: User!
+  count: Int!
+  day: Int!
+}
+
 type User {
   id: String!
   avatar: String!
@@ -9,6 +16,7 @@ type User {
   bio: String!
   fcmToken: String
   allowFcm: Boolean!
+  weekdays: [Weekday!]!
   createdAt: DateTime!
   contributions: Contribution!
 }

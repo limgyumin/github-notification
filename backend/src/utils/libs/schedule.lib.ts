@@ -18,7 +18,7 @@ export class ScheduleLib {
     });
   }
 
-  async updateGitHub() {
+  async updateGitHub(): Promise<void> {
     try {
       Logger.log('GitHub Contribution Updating...', 'updateGitHub');
       await this.contributionService.initContributions();

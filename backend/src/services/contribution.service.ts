@@ -3,27 +3,35 @@ import * as admin from 'firebase-admin';
 
 import { Contribution } from 'src/entities/contribution.entity';
 import { ContributionRepository } from 'src/repositories/contribution.repository';
+import { WeekdayRepository } from 'src/repositories/weekday.repository';
 import { UserRepository } from 'src/repositories/user.repository';
 import { GitHubLib } from 'src/utils/libs/github.lib';
 
 import config from '../config';
+import { Weekday } from 'src/entities/weekdays.entity';
 
-type ContributionResult = {
+type ProcessedContribution = {
   total: number;
   week: number;
   today: number;
   login: string;
+  weekdays: ContributionWeekDay[];
 };
+
+type ContributionWeekDay = { count: number; day: number };
+
+const WEEK = 7;
 
 @Injectable()
 export class ContributionService {
   constructor(
     private readonly contributionRepository: ContributionRepository,
+    private readonly weekdayRepository: WeekdayRepository,
     private readonly userRepository: UserRepository,
     private readonly gitHubLib: GitHubLib,
   ) {}
 
-  async getContribution(userId: string): Promise<Contribution> {
+  async getContributionByUser(userId: string): Promise<Contribution> {
     const contribution = await this.contributionRepository.findOneByUserId(
       userId,
     );
@@ -35,10 +43,18 @@ export class ContributionService {
     return contribution;
   }
 
-  private async getContributions(
+  async getWeekdaysByUser(userId: string): Promise<Weekday[]> {
+    const weekdays = await this.weekdayRepository.findAllByUserIdOrderByDayASC(
+      userId,
+    );
+
+    return weekdays;
+  }
+
+  private async getProcessedContributionByUser(
     username: string,
-  ): Promise<ContributionResult> {
-    const data = await this.gitHubLib.getContributionByUser(username);
+  ): Promise<ProcessedContribution> {
+    const data = await this.gitHubLib.getContributionByUserFromAPI(username);
 
     if (data === null) {
       throw new NotFoundException('User not found.');
@@ -62,22 +78,52 @@ export class ContributionService {
       }
     });
 
+    // 마지막 주 커밋 목록
+    const lastWeek = weeks.find((_, index) => index === weeks.length - 1);
+
+    if (!lastWeek) {
+      throw new NotFoundException('Week not found.');
+    }
+
+    const weekdays: ContributionWeekDay[] = [];
+
+    for (let i = 0; i < WEEK; i++) {
+      const contributionDay = lastWeek.contributionDays[i];
+
+      if (contributionDay) {
+        const { contributionCount, weekday } = contributionDay;
+
+        weekdays.push({ count: contributionCount, day: weekday });
+      } else {
+        const { day } = weekdays[i - 1];
+
+        weekdays.push({ count: 0, day: day + 1 });
+      }
+    }
+
     return {
       total: totalContributions,
       week: weekContributions,
       today: todayContributions,
       login: data.user.login,
+      weekdays,
     };
   }
 
   async initContributions(): Promise<void> {
+    await this.weekdayRepository.deleteAll();
     await this.contributionRepository.deleteAll();
   }
 
-  async createContribution(username: string): Promise<Contribution> {
-    const { total, week, today } = await this.getContributions(username);
+  async createContribution(username: string): Promise<void> {
+    const { total, week, today, weekdays } =
+      await this.getProcessedContributionByUser(username);
 
     const user = await this.userRepository.findOneByUsername(username);
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
 
     const contribution = this.contributionRepository.create({
       user,
@@ -86,36 +132,58 @@ export class ContributionService {
       today,
     });
 
-    return await this.contributionRepository.save(contribution);
+    await Promise.all(
+      weekdays.map((weekday) => {
+        const { count, day } = weekday;
+        const _weekdays = this.weekdayRepository.create({ count, day, user });
+
+        return this.weekdayRepository.save(_weekdays);
+      }),
+    );
+
+    await this.contributionRepository.save(contribution);
   }
 
   async updateContributions() {
     const users = await this.userRepository.findAll();
 
     const contributionResults = await Promise.all(
-      users.map((user) => this.getContributions(user.username)),
+      users.map((user) => this.getProcessedContributionByUser(user.username)),
     );
 
     await Promise.all(
-      contributionResults.map((contributionResult) => {
+      contributionResults.map(async (contributionResult) => {
         if (contributionResult !== null) {
           const user = users.find(
             (user) => user.username === contributionResult.login,
           );
 
           if (user !== undefined) {
-            const { total, week, today } = contributionResult;
+            const { total, week, today, weekdays } = contributionResult;
 
             if (today === 0 && user.allowFcm && user.fcmToken) {
-              this.sendMessage(user.fcmToken);
+              await this.sendMessage(user.fcmToken);
             }
 
-            const contribution = this.contributionRepository.create();
+            const contribution = this.contributionRepository.create({
+              user,
+              total,
+              week,
+              today,
+            });
 
-            contribution.user = user;
-            contribution.total = total;
-            contribution.week = week;
-            contribution.today = today;
+            await Promise.all(
+              weekdays.map((weekday) => {
+                const { count, day } = weekday;
+                const _weekdays = this.weekdayRepository.create({
+                  count,
+                  day,
+                  user,
+                });
+
+                return this.weekdayRepository.save(_weekdays);
+              }),
+            );
 
             return this.contributionRepository.save(contribution);
           }
